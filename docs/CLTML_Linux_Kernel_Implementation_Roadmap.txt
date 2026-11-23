@@ -1,0 +1,397 @@
+CLTML: ACTUAL LINUX KERNEL IMPLEMENTATION ROADMAP
+================================================
+
+Purpose
+-------
+Move CLTML from its existing Python + native C11 userspace feasibility prototype
+toward a carefully scoped Linux-kernel implementation.
+
+This roadmap deliberately avoids claiming that a userspace prototype is already
+a kernel lock implementation. The first kernel milestone is a research
+proof-of-concept with a narrow, explicit synchronization contract. It is NOT a
+plan to replace Linux qspinlock, mutex, RCU, or other core primitives wholesale.
+
+PROJECT CONTEXT
+---------------
+Existing work:
+- Python offline pipeline: analytical trace generation, multiclass GBDT training,
+  feature ranking, and LUT generation.
+- CLTML-v1: two 4,096-entry, 4 KB lookup-table designs.
+- CLTML-v2: reported two-tier 8 KB cascaded LUT.
+- Native C11 benchmark: quantization, lookup timing, and an atomic
+  quiescent-epoch switching experiment.
+- Existing trace windows are analytically generated, not captured from a live
+  Linux kernel through perf_event.
+- Existing userspace timings do not include the full cost of live feature
+  acquisition in a kernel hot path.
+
+Main research objective:
+Demonstrate whether an offline-trained, quantized policy selector can be
+integrated into a restricted Linux-kernel synchronization experiment while
+preserving the locking contract, and measure the complete costs and limits.
+
+NON-NEGOTIABLE SAFETY RULES
+---------------------------
+1. Do NOT patch or replace Linux qspinlock internals as the first kernel step.
+2. Do NOT call mutex_lock() from atomic context, interrupt context, or while
+   holding a spinlock.
+3. Do NOT treat RCU, spinlocks, mutexes, cohort locks, and adaptive mutexes as
+   interchangeable. Their semantics and caller-context requirements differ.
+4. Do NOT collect expensive performance counters synchronously on every lock
+   acquisition unless measurements prove that the method is safe and cheap.
+5. Do NOT perform floating-point operations in kernel code.
+6. Do NOT allocate memory, perform I/O, log with printk(), or take sleeping
+   locks in a hot/atomic path.
+7. Do NOT use an ordinary active_users counter as proof of safe policy switching.
+   Admission and transition must be coordinated by a correct protocol.
+8. Keep a known-correct static fallback. If model data, feature data, or policy
+   state is invalid, use the fallback.
+9. First validate on a disposable VM or test machine. Keep a bootable known-good
+   kernel and recovery path.
+10. Never claim production-kernel readiness from a loadable module benchmark.
+
+RECOMMENDED IMPLEMENTATION STRATEGY
+----------------------------------
+Use a staged path.
+
+Stage 0: Define the exact lock contract
+- Choose ONE initial use case and ONE synchronization contract.
+- Specify whether callers may sleep.
+- Specify process, softirq, hardirq, and preemption constraints.
+- Specify whether recursion is possible.
+- Specify ownership, fairness, starvation, and memory-ordering requirements.
+- Specify what the policy is actually allowed to change.
+- Initially let CLTML select only among compatible parameters or modes of one
+  controlled wrapper. Do not select between RCU and mutex or between sleeping
+  and non-sleeping primitives at arbitrary call sites.
+- Write down the invariant: every caller must use the same synchronization
+  contract for a given protected object throughout its lifetime.
+
+Deliverable:
+- cltml_design_contract.md
+- State diagram and allowed/forbidden calling contexts.
+- A table of the policy choices and why they are semantically compatible.
+
+Stage 1: Prepare a safe kernel development environment
+- Record `uname -a`, kernel configuration, compiler version, CPU model, and
+  available kernel headers/build tree.
+- Use a disposable VM first, preferably with a debug-capable kernel.
+- Install matching kernel headers/development package.
+- Keep the current working kernel installed and verify boot-menu recovery.
+- Create a small out-of-tree module using Kbuild.
+- Confirm module load, unload, and clean rebuild against the exact target kernel.
+- Enable useful debugging options where available:
+  CONFIG_DEBUG_KERNEL
+  CONFIG_DEBUG_ATOMIC_SLEEP
+  CONFIG_PROVE_LOCKING / lockdep
+  CONFIG_KASAN (where supported)
+  CONFIG_KCSAN (where supported)
+  CONFIG_KUNIT (for in-tree tests)
+- Do not assume all options are enabled in the distribution kernel.
+
+Deliverables:
+- environment.md
+- minimal hello_cltml.ko
+- reproducible build and load/unload commands
+- recovery instructions
+
+Stage 2: Build a kernel-side baseline BEFORE adding ML
+- Implement a small test module or, preferably for durable tests, an in-tree
+  test under a dedicated CLTML experiment directory.
+- Use a standard Linux primitive appropriate to the selected contract.
+- Protect a simple shared counter or bounded data structure.
+- Add concurrent kernel workers (kthreads) or a controlled test interface.
+- Measure baseline throughput, wait time, hold time, and contention.
+- Verify lockdep/debug-kernel behaviour before adding the selector.
+- Keep test workload generation separate from the lock implementation.
+
+Deliverables:
+- baseline module/test
+- correctness test results
+- baseline performance results
+- explicit list of contexts in which the lock is used
+
+Stage 3: Collect REAL workload and feature data
+- Begin with userspace workload traces and perf measurements, then move to
+  kernel instrumentation only where justified.
+- Inspect supported events first; PMU event names and availability vary by CPU.
+- Use perf list and perf stat to discover supported events.
+- Candidate measurements may include cycles, instructions, cache references,
+  cache misses, context switches, CPU migrations, and available NUMA events.
+- Lock contention should be measured with suitable kernel tracing or lock
+  profiling facilities where available.
+- Do not assume a generic LLC miss count is equivalent to a specific CLTML
+  feature such as cross-NUMA traffic or lock_queue_depth.
+- Mark every feature with its source, sampling period, unit, aggregation window,
+  and collection overhead.
+- Use periodic/background sampling initially. Publish the staleness/latency
+  trade-off. Avoid reading PMCs in every lock acquisition until separately
+  justified.
+- Separate training workloads from test workloads by workload identity or run,
+  not merely random trace-window splitting.
+- Keep the existing analytical dataset as Dataset A. Add real measured traces as
+  Dataset B. Do not silently merge them.
+
+Deliverables:
+- real_trace_collector/
+- feature_schema.md
+- raw traces with machine/workload metadata
+- Dataset A vs Dataset B comparison
+- feature collection overhead measurements
+
+Stage 4: Port the inference path into kernel-safe C
+- Generate a kernel-specific header from the offline Python pipeline.
+- Use fixed-width integer types and kernel-supported types/macros.
+- Avoid libc headers and userspace-only APIs.
+- Avoid floating point, dynamic allocation, and unpredictable operations.
+- Check table alignment and actual section placement in the built module/kernel.
+- Check code size and data size with size, readelf, and objdump.
+- Confirm the table is read-only after initialization where the build arrangement
+  permits; do not assume a `static const` declaration alone proves every
+  placement or protection property.
+- Validate all index bounds and quantization cutpoints.
+- Add explicit handling for missing, stale, saturated, or out-of-range features.
+- Add a static fallback policy.
+- Benchmark the kernel-side selector separately from feature collection.
+
+Deliverables:
+- cltml_kernel_lut.h
+- kernel-safe quantizer and lookup function
+- bounds and invalid-input tests
+- module/kernel text and data footprint report
+
+Stage 5: Integrate CLTML only at a controlled policy boundary
+- Keep the ML selector separate from lock acquisition correctness.
+- First update a policy parameter at a safe, explicit boundary.
+- If using a single primitive with tunable parameters, define exactly which
+  parameter can change and why it does not change the lock's semantics.
+- If experimenting with multiple primitive types, restrict the experiment to
+  callers whose context and semantics permit every candidate. Make the mode
+  immutable for an object's lifetime unless a proven migration protocol exists.
+- Never switch an object from a spinlock to a mutex while callers may be in
+  atomic context.
+- Do not route read-mostly operations to RCU merely because a classifier predicts
+  "read-heavy"; RCU requires a separately designed read-side and reclamation
+  protocol.
+- The first kernel milestone should be conservative: selector recommends a
+  parameter/configuration; a safe control path validates and applies it.
+- Keep a manual disable switch and static fallback.
+
+Deliverables:
+- kernel integration patch/module
+- explicit policy contract
+- fallback and disable tests
+- lockdep/debug-kernel test report
+
+Stage 6: Design and validate policy update / epoch switching
+- Write the state machine before writing the implementation.
+- Identify the exact linearization point for admission and transition.
+- Prove that no new participant can enter under the old policy after the
+  transition commits, and no participant can observe a partially updated policy.
+- Decide whether a lock, sequence counter, RCU pointer, or another established
+  kernel synchronization mechanism is appropriate. The choice depends on the
+  data and reader/writer contract; do not select one by name alone.
+- Define what happens to waiters already queued on the old implementation.
+- Define timeout, starvation, cancellation, CPU hotplug, module unload, and
+  error behaviour.
+- Avoid freeing or reusing old policy data until all possible readers are done.
+- Test races with many kthreads and forced transition timing.
+- Use KCSAN, lockdep, KASAN, KUnit, and model checking where available and
+  appropriate. No one tool proves the entire correctness claim.
+- If the protocol cannot be proved for primitive migration, do not implement
+  primitive migration. Keep policy updates parameter-only.
+
+Deliverables:
+- formal state machine
+- transition/admission pseudocode
+- memory-ordering explanation
+- concurrency stress suite
+- model-checking or litmus-test results
+- explicit limitations
+
+Stage 7: Evaluate the complete system
+Measure at least:
+A. Feature acquisition / sampling cost.
+B. Feature preprocessing and normalization.
+C. Quantization cost.
+D. LUT lookup cost.
+E. Policy application/update cost.
+F. End-to-end decision cost.
+G. Lock wait time and critical-section throughput.
+H. Tail latency: p50, p95, p99, p99.9.
+I. CPU utilization and sampling overhead.
+J. Memory footprint and cache behaviour.
+K. Transition delay, deferred updates, and starvation.
+L. Accuracy, macro-F1, confusion matrix, mean regret, and p95/p99 regret.
+
+Baselines:
+- fixed/static configuration
+- simple rule-based heuristic
+- small decision tree
+- full GBDT (where feasible as an offline/userspace comparison)
+- CLTML-v1
+- CLTML-v2
+
+Use repeated runs, report distributions and variance, control CPU affinity,
+frequency scaling, thermal state, background load, compiler flags, and kernel
+version. Record all configuration details. Do not compare results from different
+runs without identifying the configurations.
+
+Deliverables:
+- raw CSV/JSON measurements
+- benchmark scripts
+- plots and summary tables
+- complete reproduction command
+- limitations and threats-to-validity section
+
+Stage 8: Choose the kernel integration level
+There are three possible levels:
+
+Level 1 — Out-of-tree module feasibility:
+- Fastest and safest first kernel milestone.
+- Demonstrates kernel-safe LUT execution and controlled policy updates.
+- Does not demonstrate replacement of a production kernel lock.
+
+Level 2 — In-tree experimental subsystem:
+- Add a narrowly scoped experiment and tests to a research kernel branch.
+- Use standard kernel build/test infrastructure.
+- Makes review and instrumentation easier.
+- Still not equivalent to changing core qspinlock.
+
+Level 3 — Core synchronization integration:
+- Only after a correctness proof, strong real-workload results, and review by
+  kernel synchronization experts.
+- Requires a carefully justified change to established kernel locking code.
+- Not an appropriate first implementation step for this project.
+
+Recommended sequence: Level 1 -> Level 2 -> consider Level 3 only if evidence
+and research value justify it.
+
+Stage 9: Publication and reproducibility
+- Update the paper only after the official experiment set is frozen.
+- Clearly distinguish synthetic analytical traces, real hardware traces,
+  userspace native timing, and kernel measurements.
+- Report full end-to-end costs, not just LUT lookup latency.
+- Include CPU, kernel, compiler, configuration, workload, and PMU event details.
+- Publish raw data and scripts where permitted.
+- Correct and verify all references against primary sources.
+- Narrow claims to what the implementation actually demonstrates.
+- Add a threats-to-validity section covering synthetic traces, counter
+  availability, sampling staleness, architecture dependence, kernel context,
+  and generalization.
+- Do not claim mainline readiness from an out-of-tree module.
+
+SUGGESTED 8-WEEK EXECUTION PLAN
+-------------------------------
+Week 1:
+- Define the lock contract and allowed policy choices.
+- Set up a disposable VM, matching headers, and minimal Kbuild module.
+- Record environment and recovery steps.
+
+Week 2:
+- Build a kernel-side baseline using one standard primitive.
+- Add kthread workload and correctness tests.
+- Run lockdep/debug checks.
+
+Week 3:
+- Discover PMU events and build the real trace collector.
+- Capture controlled workload traces.
+- Document feature mapping and collection overhead.
+
+Week 4:
+- Port the fixed-point quantizer and LUT to kernel-safe C.
+- Test bounds, invalid inputs, fallback, and footprint.
+
+Week 5:
+- Integrate selector at a controlled policy boundary.
+- Keep policy changes conservative and parameter-only initially.
+- Add a disable switch.
+
+Week 6:
+- Specify and test policy updates.
+- Investigate admission/transition races.
+- Use concurrency debugging and model-checking tools where possible.
+
+Week 7:
+- Run baseline, heuristic, tree, v1 and v2 comparisons.
+- Measure end-to-end latency, tail latency, regret, throughput and overhead.
+
+Week 8:
+- Freeze results, update paper, publish scripts/data, and write limitations.
+
+The eight weeks are a planning estimate, not a guarantee. Kernel debugging,
+hardware availability, and correctness issues may extend the schedule.
+
+FIRST 48-HOUR CHECKLIST
+-----------------------
+1. Do not edit qspinlock or core kernel locking code.
+2. Record:
+   uname -a
+   lscpu
+   cat /proc/cmdline
+   zcat /proc/config.gz (if available)
+   perf list
+3. Confirm matching kernel headers/build tree.
+4. Boot a disposable VM or retain a verified recovery kernel.
+5. Build and load a minimal out-of-tree module.
+6. Create a one-page lock contract: caller context, protected data, policy
+   choices, and invariants.
+7. Do not add the ML selector until the baseline module passes correctness tests.
+
+QUESTIONS TO SETTLE BEFORE WRITING THE FIRST REAL MODULE
+--------------------------------------------------------
+- Which exact kernel release will be targeted?
+- Is the first prototype an out-of-tree module or an in-tree research branch?
+- Which single synchronization contract is being studied?
+- Can all callers sleep, or must the lock work in atomic context?
+- What exact policy parameter is CLTML allowed to choose?
+- Which CPU PMU events are actually available?
+- What is the recovery path if the module crashes or hangs the test machine?
+
+SUCCESS CRITERIA
+----------------
+The first successful kernel milestone is NOT "CLTML replaces Linux qspinlock."
+
+It is:
+1. A kernel module or experimental in-tree component builds on a documented
+   kernel version.
+2. A standard, appropriate Linux synchronization primitive protects shared
+   state correctly.
+3. The kernel-safe LUT returns bounded, valid decisions.
+4. The selector has a static fallback and can be disabled.
+5. Policy updates obey a documented and tested synchronization contract.
+6. Real workload measurements and complete overhead are reported.
+7. Results can be reproduced from scripts and raw data.
+
+Only after these criteria are met should the project consider broader
+synchronization integration.
+
+
+AUTHORITATIVE KERNEL DOCUMENTATION TO READ
+------------------------------------------
+Read the documentation matching the exact kernel tree/version you target.
+The online "latest" documentation can differ from an older distribution kernel.
+
+1. Linux locking rules and lock types:
+   https://docs.kernel.org/next/locking/index.html
+   https://kernel.org/doc/html/latest/locking/locktypes.html
+
+2. Building out-of-tree kernel modules with Kbuild:
+   https://docs.kernel.org/kbuild/modules.html
+
+3. Kernel locking correctness and lockdep:
+   https://docs.kernel.org/locking/lockdep-design.html
+   https://origin.kernel.org/doc/html/latest/process/4.Coding.html
+
+4. Linux Kernel Memory Model:
+   https://docs.kernel.org/dev-tools/lkmm/index.html
+
+5. Generic mutex design and semantics:
+   https://kernel.org/doc/html/latest/locking/mutex-design.html
+
+Important note:
+`spinlock_t` semantics differ on PREEMPT_RT kernels; `raw_spinlock_t` remains a
+strict spinning lock and is intended for narrow low-level use. Decide the target
+kernel configuration and execution context before choosing a primitive. Consult
+the exact target tree's locking documentation rather than relying on old
+tutorials or assuming all Linux configurations behave identically.

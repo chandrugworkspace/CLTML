@@ -1,0 +1,41 @@
+ID,Title,Authors,Venue,Year,Database,Screener_1_Decision,Screener_2_Decision,Consensus,Exclusion_Reason
+1,"Everything You Always Wanted to Know About Synchronization but Were Afraid to Ask","T. David, R. Guerraoui, V. Trigonakis","ACM SOSP",2013,"ACM DL",Include,Include,Include,-
+2,"Multicore Locks: The Case Is Not Closed Yet","H. Guiroux, R. Lachaize, V. Quema","USENIX ATC",2016,"USENIX",Include,Include,Include,-
+3,"Is Parallel Programming Hard, And, If So, What Can You Do About It?","P. E. McKenney","kernel.org",2021,"Semantic Scholar",Include,Include,Include,-
+4,"A Survey on Minimizing Lock Contention in Shared Resources in Linux Kernel","Y. Cho, B. Lee, Y. Kwon","IEEE ICTC",2022,"IEEE Xplore",Include,Include,Include,-
+5,"Lock Cohorting: A General Technique for Designing NUMA Locks","D. Dice, V. J. Marathe, N. Shavit","ACM PPoPP",2012,"ACM DL",Include,Include,Include,-
+6,"qspinlock: A 4-Byte Queue Spinlock with Slowpath MCS","W. Long","LKML / LWN.net",2014,"Semantic Scholar",Include,Include,Include,-
+7,"RCU Usage in the Linux Kernel: Eighteen Years Later","P. E. McKenney, J. Walpole, et al.","ACM SIGOPS OSR",2020,"ACM DL",Include,Include,Include,-
+8,"Compact NUMA-Aware Locks","D. Dice, A. Kogan","ACM EuroSys",2019,"ACM DL",Include,Include,Include,-
+9,"Scalable and Practical Locking with Shuffling","S. Kashyap, I. Calciu, X. Cheng, C. Min, T. Kim","ACM SOSP",2019,"ACM DL",Include,Include,Include,-
+10,"Speculative Lock Elision: Enabling Highly Concurrent Multithreaded Execution","R. Rajwar, J. R. Goodman","IEEE/ACM MICRO",2001,"IEEE Xplore",Include,Include,Include,-
+11,"Performance Evaluation of Intel TSX for High-Performance Computing","R. M. Yoo, C. J. Hughes, K. Lai, R. Rajwar","ACM/IEEE SC",2013,"ACM DL",Include,Include,Include,-
+12,"SmartLocks: Lock Acquisition Scheduling for Self-Aware Synchronization","J. Eastep, D. Wingate, M. D. Santambrogio, A. Agarwal","ACM ICAC",2010,"ACM DL",Include,Include,Include,-
+13,"Empirical Studies of Competitive Spinning for Shared-Memory Multiprocessors","A. R. Karlin, K. Li, M. S. Manasse, P. R. Owicki","ACM SOSP",1991,"ACM DL",Include,Include,Include,-
+14,"Reactive Synchronization Algorithms for Multiprocessors","B.-H. Lim, A. Agarwal","IEEE TPDS / ASPLOS",1994,"IEEE Xplore",Include,Include,Include,-
+15,"Towards a Machine Learning-Assisted Kernel with LAKE","A. Fingler, L. Tarte, M. Yu, D. Szekely, A. Akella, C. J. Rossbach","ACM ASPLOS",2023,"ACM DL",Include,Include,Include,-
+16,"An Analysis of Linux Scalability to Many Cores","S. Boyd-Wickizer, A. T. Clements, Y. Mao, F. Kaashoek, R. Morris, N. Zeldovich","USENIX OSDI",2010,"USENIX",Include,Include,Include,-
+17,"Understanding Manycore Scalability of File Systems","C. Min, S. Kashyap, S. Maass, T. Kim","USENIX ATC",2016,"USENIX",Include,Include,Include,-
+18,"The eXpress Data Path: Fast Programmable Packet Processing in the OS Kernel","T. Hoiland-Jorgensen et al.","ACM CoNEXT",2018,"ACM DL",Include,Include,Include,-
+19,"The Linux Scheduler: A Decade of Wasted Cores","J. P. Lozi, B. Lepers, J. Funston, F. Gaud, V. Quema, A. Fedorova","ACM EuroSys",2016,"ACM DL",Include,Include,Include,-
+20,"LinnOS: Predictability on Unpredictable Flash Storage with a Light-Weight Neural Network","M. Hao, H. Li, M. H. Hao, B. Bilas, H. S. Gunawi","USENIX OSDI",2020,"USENIX",Include,Include,Include,-
+21,"Human-Level Control Through Deep Reinforcement Learning","V. Mnih et al.","Nature",2015,"Semantic Scholar",Include,Include,Include,-
+22,"Malthusian Locks","D. Dice","ACM EuroSys",2017,"ACM DL",Include,Include,Include,-
+23,"QuickScorer: A Fast Algorithm to Evaluate Scoring Forests","C. Lucchese, F. M. Nardini, S. Orlando, R. Perego, F. Silvestri, S. Trani","ACM SIGIR / TOIS",2015,"ACM DL",Include,Include,Include,-
+24,"TreeLUT: An Efficient Alternative to Deep Neural Networks for Inference Acceleration","A. Khataei, K. Bazargan","ACM/SIGDA FPGA",2025,"ACM DL",Include,Include,Include,-
+25,"Frightening Small Children and Disconcerting Grown-Ups: Concurrency in the Linux Kernel","J. Alglave, L. Maranget, P. E. McKenney, A. Parri, A. Stern","ACM ASPLOS",2018,"ACM DL",Include,Include,Include,-
+26,"Verifying Read-Copy-Update in a Logic for Weak Memory","J. Tassarotti, D. Dreyer, V. Vafeiadis","ACM PLDI",2015,"ACM DL",Include,Include,Include,-
+27,"Algorithms for Scalable Synchronization on Shared-Memory Multiprocessors","J. M. Mellor-Crummey, M. L. Scott","ACM TOCS",1991,"ACM DL",Include,Include,Include,-
+28,"Concurrent Programming Without Locks","K. Fraser, T. Harris","ACM TOCS",2007,"ACM DL",Include,Include,Include,-
+29,"Application-Informed Kernel Synchronization Primitives","S. Park, D. Zhou, Y. Qian, I. Calciu, T. Kim, S. Kashyap","USENIX OSDI",2022,"USENIX",Include,Include,Include,-
+30,"KML: Using Machine Learning to Improve Storage Systems","I. Agadakos, D. Xiang, M. Akgun, E. Zadok, P. Sharma","USENIX HotStorage",2020,"USENIX",Include,Include,Include,-
+31,"BRAVO — Biased Locking for Reader-Writer Locks","D. Dice, A. Kogan","USENIX ATC",2019,"USENIX",Include,Include,Include,-
+32,"The Art of Multiprocessor Programming","M. Herlihy, N. Shavit, V. Luchangco, M. Spear","Morgan Kaufmann",2020,"Book",Include,Include,Include,-
+33,"Documentation for Hardware Vulnerabilities: MDS and TAA","Linux Kernel Organization","Linux Kernel Docs",2024,"Kernel Docs",Include,Include,Include,-
+34,"Microarchitectural Data Sampling (MDS) Advisory","Intel Corporation","Intel Security Advisory",2019,"Vendor Advisory",Include,Include,Include,-
+35,"Treelite: Fast and Universal Model Compiler for Tree Ensembles","H. Cho, T. Chen","MLSys",2020,"arXiv / MLSys",Include,Include,Include,-
+36,"Bolt: Accelerated GBDT Inference with Look-Up Tables","F. Zhang et al.","IEEE TPDS",2022,"IEEE Xplore",Include,Exclude,Exclude,"User-level model compiler without kernel memory bounds"
+37,"Reinforcement Learning for Database Buffer Management","X. Chen et al.","VLDB",2021,"ACM DL",Exclude,Include,Exclude,"Database subsystem without OS kernel mapping"
+38,"Fast Tree Inference on FPGAs via Bit-Parallelism","S. Wang et al.","IEEE TCAD",2021,"IEEE Xplore",Exclude,Exclude,Exclude,"FPGA hardware implementation; non-x86 host CPU"
+39,"Adaptive Spinlocks for Manycore Operating Systems","Y. Liu et al.","ACM EuroSys Posters",2018,"ACM DL",Include,Exclude,Exclude,"Extended abstract only; lacked verifiable testbed baselines"
+40,"Machine Learning for CPU Power Governor Selection","M. Klein et al.","USENIX ATC",2023,"USENIX",Exclude,Exclude,Exclude,"DVFS power management, orthogonal to synchronization"

@@ -1,0 +1,17 @@
+{
+  "host_cpu": "Intel Core 5 210H",
+  "tsc_ghz": 2.688,
+  "total_evals": 20,
+  "wins_mutex": 0,
+  "wins_spinlock": 3,
+  "wins_ticket": 7,
+  "wins_mcs": 10,
+  "selector_overhead_lut_ns": 4.38,
+  "selector_overhead_gbdt_ns": 347.80,
+  "e2e_cltml_8t_mops": 8.53,
+  "e2e_cltml_8t_ci95": 0.03,
+  "e2e_cltml_8t_p99_ns": 7062.94,
+  "e2e_mcs_8t_mops": 8.49,
+  "e2e_spin_8t_mops": 7.02,
+  "e2e_gbdt_8t_mops": 8.55
+}

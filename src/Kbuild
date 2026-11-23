@@ -1,0 +1,3 @@
+# Kbuild for CLTML Linux Kernel Module
+obj-m += cltml_module.o
+ccflags-y := -I$(src) -Wno-unused-parameter

@@ -1,0 +1,22 @@
+{
+  "lat_gbdt_ns": 325.66,
+  "cyc_gbdt": 875.4,
+  "lat_int_naive_ns": 342.97,
+  "cyc_int_naive": 921.9,
+  "lat_int_ns": 83.98,
+  "cyc_int": 225.7,
+  "lat_4x3_ns": 3.52,
+  "cyc_4x3": 9.5,
+  "lat_3x4_ns": 5.85,
+  "cyc_3x4": 15.7,
+  "lat_direct_ns": 1.54,
+  "cyc_direct": 4.1,
+  "lat_percpu_guard_ns": 7.59,
+  "p50_cyc": 14.4,
+  "p95_cyc": 18.4,
+  "p99_cyc": 28.4,
+  "p999_cyc": 46.4,
+  "mt_throughput_mops": 10.91,
+  "mt_safe_switches": 1437118,
+  "mt_violations": 0
+}
