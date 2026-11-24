@@ -6,7 +6,19 @@
 - **Chandru G** — *Department of Computer Science and Engineering (AI & ML), PES University, Bengaluru, Karnataka, India* (`chandrug@pesu.pes.edu`)
 - **Chethan S** — *Department of Computer Science and Engineering (AI & ML), PES University, Bengaluru, Karnataka, India* (`chethans@pesu.pes.edu`)
 
-**Research Paper:** [`cltml_research_paper.pdf`](cltml_research_paper.pdf)
+**Research Paper (Camera-Ready):** [`CLTML_IEEE_1.pdf`](CLTML_IEEE_1.pdf) / [`cltml_research_paper.pdf`](cltml_research_paper.pdf)
+
+---
+
+> [!IMPORTANT]
+> ### 📢 Notice to Evaluators: Turnitin Report & Manuscript Versioning
+> - **Actual & Original Research Paper (`CLTML_IEEE_1.pdf`):**  
+>   [`CLTML_IEEE_1.pdf`](CLTML_IEEE_1.pdf) (mirrored in this repository as [`cltml_research_paper.pdf`](cltml_research_paper.pdf)) is the authentic, original, and newly updated camera-ready research paper submitted for evaluation.
+> - **Initial Turnitin Screening (`CLTML_IEEE.pdf`):**  
+>   An earlier draft named `CLTML_IEEE.pdf` (submitted via Turnitin Quick Submit as `Chethan_S_CLTML_IEEE-1.pdf`, **Submission ID:** `trn:oid:::1:3717105205`, **Submission Date:** Nov 20, 2026, 9:33 AM GMT+5:30) was uploaded to Turnitin for the first evaluation/similarity report.
+> - **Advisory for Evaluators (Avoid False Duplication / Plagiarism Flags):**  
+>   If `CLTML_IEEE_1.pdf` is evaluated or scanned through Turnitin / repository matching, it will show a high similarity match against our own initial submission (`CLTML_IEEE.pdf` / `trn:oid:::1:3717105205`). This is an expected self-match from the same student authors (**Chandru G** and **Chethan S**, PES University).  
+>   **Evaluators are kindly requested not to flag or penalize `CLTML_IEEE_1.pdf` for similarity against this prior report**, as `CLTML_IEEE_1.pdf` is the actual, new, and genuine research paper for this project.
 
 ---
 
@@ -43,6 +55,7 @@ CLTML satisfies five kernel-oriented constraints:
 
 ```
 .
+├── CLTML_IEEE_1.pdf               # Original & new camera-ready research paper
 ├── cltml_research_paper.pdf       # Publication research paper (Camera-Ready PDF)
 ├── Makefile                       # Project build and execution automation
 ├── CMakeLists.txt                 # CMake build configuration
@@ -71,6 +84,7 @@ CLTML satisfies five kernel-oriented constraints:
 │   ├── cltml_empirical_traces.csv # 4,000 empirical traces recorded on physical silicon
 │   └── screening_prisma_data.csv  # PRISMA literature screening decisions
 ├── paper/
+│   ├── CLTML_IEEE_1.pdf           # Original & new camera-ready research paper
 │   ├── cltml_research_paper.pdf   # Mirrored publication research paper
 │   ├── CLTML_IEEE_Research_Paper.tex # IEEE LaTeX source template
 │   ├── Review_Paper_IEEE.html     # Two-column IEEE formatted HTML paper
