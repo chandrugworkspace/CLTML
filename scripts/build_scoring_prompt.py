@@ -120,7 +120,6 @@ Confirm all eight criteria have scores and explanations, total score is mathemat
 **Title:** Compile-Time Lookup Tables for Inference-Latency-Bounded Lock Selection in the Linux Kernel: A Constraint Review and Feasibility Study  
 **Authors:** Chandru G and Chethan S  
 *Department of Computer Science and Engineering (AI & ML), PES University, Bengaluru, Karnataka, India*  
-Emails: `chandrug@pesu.pes.edu`, `chethans@pesu.pes.edu`
 
 #### Abstract
 Multicore Linux systems experience severe scalability bottlenecks under lock contention on NUMA servers. While machine learning (ML) can classify contention and select optimal synchronization primitives, hot-path deployment encounters a physical latency wall: lock acquisitions execute within 10–100 ns, whereas software tree models require 250–1,200 ns. We present CLTML, compiling an offline GBDT into a 4 KB L1-resident lookup table evaluated via branchless fixed-point indexing with zero floating-point operations. In userspace microbenchmarks on an Intel Core Ultra 7 255HX running CachyOS Linux 7.3 (Linux 6.8+ LTS compatible), CLTML achieves 3.76 ns inline lookup latency (10.1 cycles) and 9.98–15.28 ns end-to-end latency—an 89.1x speedup over software GBDTs—retaining 95.05% accuracy and bounding mean regret to 1.04 ns. We validate four userspace locks across asymmetric cores, model 64-core NUMA scaling, and verify kernel deployability via an out-of-tree module implementing Tier 1 spin-ceiling tuning with zero sleep-in-atomic violations; Tier 2 primitive switching remains a proposed design.

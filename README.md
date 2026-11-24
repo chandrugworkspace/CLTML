@@ -3,8 +3,8 @@
 ### *A Constraint Review and Feasibility Study*
 
 **Authors:**
-- **Chandru G** — *Department of Computer Science and Engineering (AI & ML), PES University, Bengaluru, Karnataka, India* (`chandrug@pesu.pes.edu`)
-- **Chethan S** — *Department of Computer Science and Engineering (AI & ML), PES University, Bengaluru, Karnataka, India* (`chethans@pesu.pes.edu`)
+- **Chandru G** — *Department of Computer Science and Engineering (AI & ML), PES University, Bengaluru, Karnataka, India*
+- **Chethan S** — *Department of Computer Science and Engineering (AI & ML), PES University, Bengaluru, Karnataka, India*
 
 **Research Paper (Camera-Ready):** [`CLTML_IEEE_1.pdf`](CLTML_IEEE_1.pdf) / [`cltml_research_paper.pdf`](cltml_research_paper.pdf)
 

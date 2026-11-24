@@ -1,7 +1,7 @@
 # CLTML Complete Improvement Guide, Server Execution Playbook & Teammate Onboarding
 
 **Project:** *Inference-Latency Constraints in ML-Driven Kernel Lock Selection: A Deployment-Aware Survey and Feasibility Study of the CLTML Architecture*  
-**Authors:** Chandru G (`pes1ug25am086@pesu.pes.edu`) & Chethan S (`pes1ug25am095@pesu.pes.edu`)  
+**Authors:** Chandru G & Chethan S  
 **Institution:** Department of Computer Science and Engineering (AI & ML), PES University, Bengaluru, Karnataka, India
 
 ---
